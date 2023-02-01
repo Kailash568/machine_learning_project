@@ -181,12 +181,14 @@ class Pipeline(Thread):
             if Pipeline.experiment.experiment_id is not None:
                 experiment = Pipeline.experiment
                 experiment_dict = experiment._asdict()
-                experiment_dict: dict = {key: [value] for key, value in experiment_dict.items()}
-
-                experiment_dict.update({
+                experiment_dict: dict = {
+                    key: [value] for key, value in experiment_dict.items()
+                } | {
                     "created_time_stamp": [datetime.now()],
-                    "experiment_file_path": [os.path.basename(Pipeline.experiment.experiment_file_path)]})
-
+                    "experiment_file_path": [
+                        os.path.basename(Pipeline.experiment.experiment_file_path)
+                    ],
+                }
                 experiment_report = pd.DataFrame(experiment_dict)
 
                 os.makedirs(os.path.dirname(Pipeline.experiment_file_path), exist_ok=True)
@@ -204,7 +206,7 @@ class Pipeline(Thread):
         try:
             if os.path.exists(Pipeline.experiment_file_path):
                 df = pd.read_csv(Pipeline.experiment_file_path)
-                limit = -1 * int(limit)
+                limit *= -1
                 return df[limit:].drop(columns=["experiment_file_path", "initialization_timestamp"], axis=1)
             else:
                 return pd.DataFrame()

@@ -54,7 +54,7 @@ class DataIngestion:
             logging.info(f"Extracting tgz file: [{tgz_file_path}] into dir: [{raw_data_dir}]")
             with tarfile.open(tgz_file_path) as housing_tgz_file_obj:
                 housing_tgz_file_obj.extractall(path=raw_data_dir)
-            logging.info(f"Extraction completed")
+            logging.info("Extraction completed")
 
         except Exception as e:
             raise HousingException(e,sys) from e
@@ -76,9 +76,9 @@ class DataIngestion:
                 bins=[0.0, 1.5, 3.0, 4.5, 6.0, np.inf],
                 labels=[1,2,3,4,5]
             )
-            
 
-            logging.info(f"Splitting data into train and test")
+
+            logging.info("Splitting data into train and test")
             strat_train_set = None
             strat_test_set = None
 
@@ -93,7 +93,7 @@ class DataIngestion:
 
             test_file_path = os.path.join(self.data_ingestion_config.ingested_test_dir,
                                         file_name)
-            
+
             if strat_train_set is not None:
                 os.makedirs(self.data_ingestion_config.ingested_train_dir,exist_ok=True)
                 logging.info(f"Exporting training datset to file: [{train_file_path}]")
@@ -103,13 +103,14 @@ class DataIngestion:
                 os.makedirs(self.data_ingestion_config.ingested_test_dir, exist_ok= True)
                 logging.info(f"Exporting test dataset to file: [{test_file_path}]")
                 strat_test_set.to_csv(test_file_path,index=False)
-            
 
-            data_ingestion_artifact = DataIngestionArtifact(train_file_path=train_file_path,
-                                test_file_path=test_file_path,
-                                is_ingested=True,
-                                message=f"Data ingestion completed successfully."
-                                )
+
+            data_ingestion_artifact = DataIngestionArtifact(
+                train_file_path=train_file_path,
+                test_file_path=test_file_path,
+                is_ingested=True,
+                message="Data ingestion completed successfully.",
+            )
             logging.info(f"Data Ingestion artifact:[{data_ingestion_artifact}]")
             return data_ingestion_artifact
 

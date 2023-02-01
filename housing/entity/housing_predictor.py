@@ -45,7 +45,7 @@ class HousingData:
 
     def get_housing_data_as_dict(self):
         try:
-            input_data = {
+            return {
                 "longitude": [self.longitude],
                 "latitude": [self.latitude],
                 "housing_median_age": [self.housing_median_age],
@@ -54,8 +54,8 @@ class HousingData:
                 "population": [self.population],
                 "households": [self.households],
                 "median_income": [self.median_income],
-                "ocean_proximity": [self.ocean_proximity]}
-            return input_data
+                "ocean_proximity": [self.ocean_proximity],
+            }
         except Exception as e:
             raise HousingException(e, sys)
 
@@ -73,8 +73,7 @@ class HousingPredictor:
             folder_name = list(map(int, os.listdir(self.model_dir)))
             latest_model_dir = os.path.join(self.model_dir, f"{max(folder_name)}")
             file_name = os.listdir(latest_model_dir)[0]
-            latest_model_path = os.path.join(latest_model_dir, file_name)
-            return latest_model_path
+            return os.path.join(latest_model_dir, file_name)
         except Exception as e:
             raise HousingException(e, sys) from e
 
@@ -82,7 +81,6 @@ class HousingPredictor:
         try:
             model_path = self.get_latest_model_path()
             model = load_object(file_path=model_path)
-            median_house_value = model.predict(X)
-            return median_house_value
+            return model.predict(X)
         except Exception as e:
             raise HousingException(e, sys) from e
