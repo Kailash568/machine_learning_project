@@ -93,12 +93,11 @@ class Configuartion:
 
             )
 
-            data_validation_config = DataValidationConfig(
+            return DataValidationConfig(
                 schema_file_path=schema_file_path,
                 report_file_path=report_file_path,
                 report_page_file_path=report_page_file_path,
             )
-            return data_validation_config
         except Exception as e:
             raise HousingException(e,sys) from e
 

@@ -50,7 +50,7 @@ def render_artifact_dir(req_path):
         if ".html" in abs_path:
             with open(abs_path, "r", encoding="utf-8") as file:
                 content = ''
-                for line in file.readlines():
+                for line in file:
                     content = f"{content}{line}"
                 return content
         return send_file(abs_path)
@@ -185,7 +185,7 @@ def update_model_config():
         return str(e)
 
 
-@app.route(f'/logs', defaults={'req_path': f'{LOG_FOLDER_NAME}'})
+@app.route('/logs', defaults={'req_path': f'{LOG_FOLDER_NAME}'})
 @app.route(f'/{LOG_FOLDER_NAME}/<path:req_path>')
 def render_log_dir(req_path):
     os.makedirs(LOG_FOLDER_NAME, exist_ok=True)

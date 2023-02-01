@@ -40,13 +40,16 @@ class ModelEvaluation:
                 return model
             model_eval_file_content = read_yaml_file(file_path=model_evaluation_file_path)
 
-            model_eval_file_content = dict() if model_eval_file_content is None else model_eval_file_content
+            model_eval_file_content = (
+                {} if model_eval_file_content is None else model_eval_file_content
+            )
 
             if BEST_MODEL_KEY not in model_eval_file_content:
                 return model
 
-            model = load_object(file_path=model_eval_file_content[BEST_MODEL_KEY][MODEL_PATH_KEY])
-            return model
+            return load_object(
+                file_path=model_eval_file_content[BEST_MODEL_KEY][MODEL_PATH_KEY]
+            )
         except Exception as e:
             raise HousingException(e, sys) from e
 
@@ -54,9 +57,9 @@ class ModelEvaluation:
         try:
             eval_file_path = self.model_evaluation_config.model_evaluation_file_path
             model_eval_content = read_yaml_file(file_path=eval_file_path)
-            model_eval_content = dict() if model_eval_content is None else model_eval_content
-            
-            
+            model_eval_content = {} if model_eval_content is None else model_eval_content
+                    
+
             previous_best_model = None
             if BEST_MODEL_KEY in model_eval_content:
                 previous_best_model = model_eval_content[BEST_MODEL_KEY]
@@ -72,7 +75,7 @@ class ModelEvaluation:
                 model_history = {self.model_evaluation_config.time_stamp: previous_best_model}
                 if HISTORY_KEY not in model_eval_content:
                     history = {HISTORY_KEY: model_history}
-                    eval_result.update(history)
+                    eval_result |= history
                 else:
                     model_eval_content[HISTORY_KEY].update(model_history)
 
@@ -103,16 +106,16 @@ class ModelEvaluation:
             target_column_name = schema_content[TARGET_COLUMN_KEY]
 
             # target_column
-            logging.info(f"Converting target column into numpy array.")
+            logging.info("Converting target column into numpy array.")
             train_target_arr = np.array(train_dataframe[target_column_name])
             test_target_arr = np.array(test_dataframe[target_column_name])
-            logging.info(f"Conversion completed target column into numpy array.")
+            logging.info("Conversion completed target column into numpy array.")
 
             # dropping target column from the dataframe
-            logging.info(f"Dropping target column from the dataframe.")
+            logging.info("Dropping target column from the dataframe.")
             train_dataframe.drop(target_column_name, axis=1, inplace=True)
             test_dataframe.drop(target_column_name, axis=1, inplace=True)
-            logging.info(f"Dropping target column from the dataframe completed.")
+            logging.info("Dropping target column from the dataframe completed.")
 
             model = self.get_best_model()
 
